@@ -2,7 +2,7 @@
 This program creates a collage of two separate pictures
 */
 
-public class Collage
+public class CollageV1
 {
   public static void main(String[] args)
   { 
