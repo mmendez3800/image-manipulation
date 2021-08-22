@@ -82,8 +82,174 @@ public class Picture extends SimplePicture
       " height " + getHeight() 
       + " width " + getWidth();
     return output;
-    
   }
+
+  /*
+   * This method  preserve the 2 most significant (i.e. leftmost) bits in each 8-bit number
+   * Example: The most significant 2 bits of 250 (11111010) are 11 in binary which is equal to 3 in decimal. 
+   */
+  public int mostSignificant2( int num ) 
+  {
+    return num >> 6;
+  }  
+
+  /* 
+   * This method replaces the 2 least significant (i.e. rightmost) bits of contextVal with the value of messageVal in 
+   * binary where 0 <= contextVal <= 255 and 0 <= messageVal <= 3
+   * Example: If contextVal is 182 (10110110) and messageVal is 0 (00), then contextVal will change to 180 (10110100)
+   */
+  public int embedDigits2( int contextVal, int messageVal )
+  { 
+    //This clears the 2 least significant bits of contextVal
+    contextVal = contextVal >> 2;
+    contextVal = contextVal << 2;
+    
+    //This gives us the new value of contextVal once the 2 least significant bits are replaced with the value of messageVal
+    contextVal = contextVal + messageVal;
+    
+    return contextVal;
+  }
+
+  /* 
+   * This method makes a copy of the context image and hides the image message inside this copy in its least significant 
+   * 2 bits and then returns this new image
+   */
+  public Picture hideSecretMessage2Bits( Picture context, Picture message ) 
+  { 
+    Picture contextCopy = new Picture ( context );
+    
+    //This nested for loop will execute if message is bigger than  or equal to contextCopy
+    if ( message.getWidth() >= contextCopy.getWidth() && message.getHeight() >= contextCopy.getHeight() ) 
+    { 
+      for ( int x = 0; x < contextCopy.getWidth(); x++ ) 
+      { 
+        for ( int y = 0; y < contextCopy.getHeight(); y++ ) 
+        { 
+          Pixel messagePixel = message.getPixel( x, y );
+          Pixel contextCopyPixel = contextCopy.getPixel ( x, y);
+          
+          //The values of red, green, and blue are obtained for each pixel of message
+          int redMessage = messagePixel.getRed();
+          int greenMessage = messagePixel.getGreen();
+          int blueMessage = messagePixel.getBlue();
+          
+          //The 2 most significant bits of each color value is preserved
+          redMessage = mostSignificant2( redMessage );
+          greenMessage = mostSignificant2( greenMessage );
+          blueMessage = mostSignificant2( blueMessage );
+          
+          //The values of red, green, and blue are obtained for each pixel of the copy of context
+          int redContextCopy = contextCopyPixel.getRed();
+          int greenContextCopy = contextCopyPixel.getGreen();
+          int blueContextCopy = contextCopyPixel.getBlue();
+          
+          /* The 2 least significatn bits of each color value of contextCopy is replaced with the 2 most significant bits
+           * of each color value of message */
+          redContextCopy = embedDigits2( redContextCopy, redMessage );
+          greenContextCopy = embedDigits2( greenContextCopy, greenMessage );
+          blueContextCopy = embedDigits2( blueContextCopy, blueMessage );
+          
+          //Each red, green, and blue value of contextCopy is replaced with the new value of red, green, and blue calculated
+          contextCopyPixel.setColor( new Color( redContextCopy, greenContextCopy, blueContextCopy) );
+        } 
+      }
+    }
+    
+    //This nested for loop will execute if message is smaller than contextCopy
+    else if ( message.getWidth() < contextCopy.getWidth() && message.getHeight() < contextCopy.getHeight() ) 
+    { 
+      for ( int x = 0; x < message.getWidth(); x++ ) 
+      { 
+        for ( int y = 0; y < message.getHeight(); y++ ) 
+        { 
+          Pixel messagePixel = message.getPixel( x, y );
+          Pixel contextCopyPixel = contextCopy.getPixel ( x, y);
+          
+          //The values of red, green, and blue are obtained for each pixel of message
+          int redMessage = messagePixel.getRed();
+          int greenMessage = messagePixel.getGreen();
+          int blueMessage = messagePixel.getBlue();
+          
+          //The 2 most significant bits of each color value is preserved
+          redMessage = mostSignificant2( redMessage );
+          greenMessage = mostSignificant2( greenMessage );
+          blueMessage = mostSignificant2( blueMessage );
+          
+          //The values of red, green, and blue are obtained for each pixel of contextCopy
+          int redContextCopy = contextCopyPixel.getRed();
+          int greenContextCopy = contextCopyPixel.getGreen();
+          int blueContextCopy = contextCopyPixel.getBlue();
+          
+          /* The 2 least significatn bits of each color value of contextCopy is replaced with the 2 most significant bits
+           * of each color value of message */
+          redContextCopy = embedDigits2( redContextCopy, redMessage );
+          greenContextCopy = embedDigits2( greenContextCopy, greenMessage );
+          blueContextCopy = embedDigits2( blueContextCopy, blueMessage );
+          
+          //Each red, green, and blue value of contextCopy is replaced with the new value of red, green, and blue calculated
+          contextCopyPixel.setColor( new Color( redContextCopy, greenContextCopy, blueContextCopy) );
+        } 
+      } 
+    } 
+    return contextCopy;
+  } 
+
+  /* 
+   * This method preserves the 2 least significant (i.e. rightmost) bits in each 8-bit number
+   * Example: The least significant 2 bits of 250 (11111010) are 10 in binary which is equal to 2 in decimal
+   */
+  public int getLeastSignificant2( int num )
+  { 
+    /* This & operation compares the number assigned to both integers at each bit place (either 0 or 1) and assigns a 1
+     * when both numbers are 1 and 0 for anything else
+     * Example: The operation 182 & 3 (10110110 & 00000011) results in 2 (00000010) since the second bit of both numbers
+     * is 1 and the rest are not */
+    num = num & 3;
+    
+    return num;
+  }
+
+  public int shift2BitsTo8( int num )
+  {
+    return num << 6;
+  }
+
+  /*
+   * This method returns a new picture object which is the hidden message. It is hidden within the 2 bits of context
+   */
+  public Picture recoverSecretMessage2Bits( Picture context ) 
+  { 
+    Picture result = new Picture( context.getWidth(), context.getHeight() );
+    for (int x = 0; x < result.getWidth(); x++ ) 
+    { 
+      for (int y = 0; y < result.getHeight(); y++ )
+      { 
+        Pixel contextPixel = context.getPixel( x, y );
+        Pixel resultPixel = result.getPixel( x, y );
+        
+        //The values of red, green, and blue are obtained for each pixel of context
+        int redContext = contextPixel.getRed();
+        int greenContext = contextPixel.getGreen();
+        int blueContext = contextPixel.getBlue();
+        
+        //The 2 least significant bits of red is preserved and converted to an 8-bit number
+        redContext = getLeastSignificant2( redContext );
+        redContext = shift2BitsTo8( redContext );
+        
+        //The 2 least significant bits of green is preserved and converted to an 8-bit number
+        greenContext = getLeastSignificant2( greenContext );
+        greenContext = shift2BitsTo8( greenContext );
+        
+        //The 2 least significant bits of blue is preserved and converted to an 8-bit number
+        blueContext = getLeastSignificant2( blueContext );
+        blueContext = shift2BitsTo8( blueContext );
+        
+        //Each red, green, and blue value of result is replaced with the new value of red, green, and blue calculated
+        resultPixel.setColor( new Color( redContext, greenContext, blueContext ) );
+      } 
+    } 
+    return result;
+  } 
 
   //The following method copies our calling object and performs the background change on the copy
   public Picture chromakeyBackgroundChange(Picture backgroundSourceImage) 
