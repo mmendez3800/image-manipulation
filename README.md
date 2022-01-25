@@ -1,4 +1,4 @@
-# Image Manipulation
+# Java Image Manipulation
 This is a compilation of programs to practice and understand image manipulate using the Java language
 
 ## Technologies
