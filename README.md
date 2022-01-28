@@ -1,5 +1,5 @@
 # Java Image Manipulation
-This is a compilation of programs to practice and understand image manipulate using the Java language
+This is a compilation of programs to practice and understand image manipulate using Java
 
 ## Technologies
 The programs in this project were run using the following:
