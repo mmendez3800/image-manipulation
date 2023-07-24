@@ -15,3 +15,22 @@ After cloning or forking the repository, you can run any of the Java programs th
    - An example of this would be `javac -cp Environment/ PixelManipulation.java`
 3. Run the *class* file created and enure the classpath is defined as both the **Environment** folder and the current directory
    - An example of this would be `java -cp Environment/:. PixelManipulation`
+
+## Output
+### Collage
+![Output of Collage program](images/java_manipulation_1.png)
+
+### Flip Portion
+![Output of Flip Portion program](images/java_manipulation_2.png)
+
+### Green Screen
+![Output of Green Screen program](images/java_manipulation_3.png)
+
+### Greyscale
+![Output of Greyscale program](images/java_manipulation_4.png)
+
+### Pixel Manipulation
+![Output of Pixel Manipulation program](images/java_manipulation_5.png)
+
+### Show Hidden Image
+![Output of Show Hidden Image program](images/java_manipulation_6.png)
